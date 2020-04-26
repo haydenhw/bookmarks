@@ -1,8 +1,8 @@
 const knex = require('knex')
 const app = require('../src/app')
-const { makeArticlesArray, makeMaliciousArticle } = require('./folders.fixtures')
+const { makeBookmarksArray, makeMaliciousBookmark } = require('./bookmarks.fixtures')
 
-describe('Articles Endpoints', function() {
+describe('Bookmarks Endpoints', function() {
   let db
 
   before('make knex instance', () => {
@@ -15,275 +15,275 @@ describe('Articles Endpoints', function() {
 
   after('disconnect from db', () => db.destroy())
 
-  before('clean the table', () => db('folders').truncate())
+  before('clean the table', () => db('bookmarks').truncate())
 
-  afterEach('cleanup',() => db('folders').truncate())
+  afterEach('cleanup',() => db('bookmarks').truncate())
 
-  describe(`GET /api/folders`, () => {
-    context(`Given no folders`, () => {
+  describe(`GET /api/bookmarks`, () => {
+    context(`Given no bookmarks`, () => {
       it(`responds with 200 and an empty list`, () => {
         return supertest(app)
-          .get('/api/folders')
+          .get('/api/bookmarks')
           .expect(200, [])
       })
     })
 
-    context('Given there are folders in the database', () => {
-      const testArticles = makeArticlesArray()
+    context('Given there are bookmarks in the database', () => {
+      const testBookmarks = makeBookmarksArray()
 
-      beforeEach('insert folders', () => {
+      beforeEach('insert bookmarks', () => {
         return db
-          .into('folders')
-          .insert(testArticles)
+          .into('bookmarks')
+          .insert(testBookmarks)
       })
 
-      it('responds with 200 and all of the folders', () => {
+      it('responds with 200 and all of the bookmarks', () => {
         return supertest(app)
-          .get('/api/folders')
-          .expect(200, testArticles)
+          .get('/api/bookmarks')
+          .expect(200, testBookmarks)
       })
     })
 
-    context(`Given an XSS attack folder`, () => {
-      const { maliciousArticle, expectedArticle } = makeMaliciousArticle()
+    context(`Given an XSS attack bookmark`, () => {
+      const { maliciousBookmark, expectedBookmark } = makeMaliciousBookmark()
 
-      beforeEach('insert malicious folder', () => {
+      beforeEach('insert malicious bookmark', () => {
         return db
-          .into('folders')
-          .insert([ maliciousArticle ])
+          .into('bookmarks')
+          .insert([ maliciousBookmark ])
       })
 
-      it('removes XSS attack content', () => {
+      it('removes XSS attack description', () => {
         return supertest(app)
-          .get(`/api/folders`)
+          .get(`/api/bookmarks`)
           .expect(200)
           .expect(res => {
-            expect(res.body[0].title).to.eql(expectedArticle.title)
-            expect(res.body[0].content).to.eql(expectedArticle.content)
+            expect(res.body[0].title).to.eql(expectedBookmark.title)
+            expect(res.body[0].description).to.eql(expectedBookmark.description)
           })
       })
     })
   })
 
-  describe(`GET /api/folders/:folder_id`, () => {
-    context(`Given no folders`, () => {
+  describe(`GET /api/bookmarks/:bookmark_id`, () => {
+    context(`Given no bookmarks`, () => {
       it(`responds with 404`, () => {
-        const folderId = 123456
+        const bookmarkId = 123456
         return supertest(app)
-          .get(`/api/folders/${folderId}`)
-          .expect(404, { error: { message: `Article doesn't exist` } })
+          .get(`/api/bookmarks/${bookmarkId}`)
+          .expect(404, { error: { message: `Bookmark doesn't exist` } })
       })
     })
 
-    context('Given there are folders in the database', () => {
-      const testArticles = makeArticlesArray()
+    context('Given there are bookmarks in the database', () => {
+      const testBookmarks = makeBookmarksArray()
 
-      beforeEach('insert folders', () => {
+      beforeEach('insert bookmarks', () => {
         return db
-          .into('folders')
-          .insert(testArticles)
+          .into('bookmarks')
+          .insert(testBookmarks)
       })
 
-      it('responds with 200 and the specified folder', () => {
-        const folderId = 2
-        const expectedArticle = testArticles[folderId - 1]
+      it('responds with 200 and the specified bookmark', () => {
+        const bookmarkId = 2
+        const expectedBookmark = testBookmarks[bookmarkId - 1]
         return supertest(app)
-          .get(`/api/folders/${folderId}`)
-          .expect(200, expectedArticle)
+          .get(`/api/bookmarks/${bookmarkId}`)
+          .expect(200, expectedBookmark)
       })
     })
 
-    context(`Given an XSS attack folder`, () => {
-      const { maliciousArticle, expectedArticle } = makeMaliciousArticle()
+    context(`Given an XSS attack bookmark`, () => {
+      const { maliciousBookmark, expectedBookmark } = makeMaliciousBookmark()
 
-      beforeEach('insert malicious folder', () => {
+      beforeEach('insert malicious bookmark', () => {
         return db
-          .into('folders')
-          .insert([ maliciousArticle ])
+          .into('bookmarks')
+          .insert([ maliciousBookmark ])
       })
 
-      it('removes XSS attack content', () => {
+      it('removes XSS attack description', () => {
         return supertest(app)
-          .get(`/api/folders/${maliciousArticle.id}`)
+          .get(`/api/bookmarks/${maliciousBookmark.id}`)
           .expect(200)
           .expect(res => {
-            expect(res.body.title).to.eql(expectedArticle.title)
-            expect(res.body.content).to.eql(expectedArticle.content)
+            expect(res.body.title).to.eql(expectedBookmark.title)
+            expect(res.body.description).to.eql(expectedBookmark.description)
           })
       })
     })
   })
 
-  describe(`POST /api/folders`, () => {
-    it(`creates an folder, responding with 201 and the new folder`, () => {
-      const newArticle = {
-        title: 'Test new folder',
-        style: 'Listicle',
-        content: 'Test new folder content...'
+  describe(`POST /api/bookmarks`, () => {
+    it(`creates an bookmark, responding with 201 and the new bookmark`, () => {
+      const newBookmark = {
+        title: 'Test new bookmark',
+        url: 'Listicle',
+        description: 'Test new bookmark description...'
       }
       return supertest(app)
-        .post('/api/folders')
-        .send(newArticle)
+        .post('/api/bookmarks')
+        .send(newBookmark)
         .expect(201)
         .expect(res => {
-          expect(res.body.title).to.eql(newArticle.title)
-          expect(res.body.style).to.eql(newArticle.style)
-          expect(res.body.content).to.eql(newArticle.content)
+          expect(res.body.title).to.eql(newBookmark.title)
+          expect(res.body.url).to.eql(newBookmark.url)
+          expect(res.body.description).to.eql(newBookmark.description)
           expect(res.body).to.have.property('id')
-          expect(res.headers.location).to.eql(`/api/folders/${res.body.id}`)
+          expect(res.headers.location).to.eql(`/api/bookmarks/${res.body.id}`)
           const expected = new Date().toLocaleString()
           const actual = new Date(res.body.date_published).toLocaleString()
           expect(actual).to.eql(expected)
         })
         .then(res =>
           supertest(app)
-            .get(`/api/folders/${res.body.id}`)
+            .get(`/api/bookmarks/${res.body.id}`)
             .expect(res.body)
         )
     })
 
-    const requiredFields = ['title', 'style', 'content']
+    const requiredFields = ['title', 'url', 'description']
 
     requiredFields.forEach(field => {
-      const newArticle = {
-        title: 'Test new folder',
-        style: 'Listicle',
-        content: 'Test new folder content...'
+      const newBookmark = {
+        title: 'Test new bookmark',
+        url: 'Listicle',
+        description: 'Test new bookmark description...'
       }
 
       it(`responds with 400 and an error message when the '${field}' is missing`, () => {
-        delete newArticle[field]
+        delete newBookmark[field]
 
         return supertest(app)
-          .post('/api/folders')
-          .send(newArticle)
+          .post('/api/bookmarks')
+          .send(newBookmark)
           .expect(400, {
             error: { message: `Missing '${field}' in request body` }
           })
       })
     })
 
-    it('removes XSS attack content from response', () => {
-      const { maliciousArticle, expectedArticle } = makeMaliciousArticle()
+    it('removes XSS attack description from response', () => {
+      const { maliciousBookmark, expectedBookmark } = makeMaliciousBookmark()
       return supertest(app)
-        .post(`/api/folders`)
-        .send(maliciousArticle)
+        .post(`/api/bookmarks`)
+        .send(maliciousBookmark)
         .expect(201)
         .expect(res => {
-          expect(res.body.title).to.eql(expectedArticle.title)
-          expect(res.body.content).to.eql(expectedArticle.content)
+          expect(res.body.title).to.eql(expectedBookmark.title)
+          expect(res.body.description).to.eql(expectedBookmark.description)
         })
     })
   })
 
-  describe(`DELETE /api/folders/:folder_id`, () => {
-    context(`Given no folders`, () => {
+  describe(`DELETE /api/bookmarks/:bookmark_id`, () => {
+    context(`Given no bookmarks`, () => {
       it(`responds with 404`, () => {
-        const folderId = 123456
+        const bookmarkId = 123456
         return supertest(app)
-          .delete(`/api/folders/${folderId}`)
-          .expect(404, { error: { message: `Article doesn't exist` } })
+          .delete(`/api/bookmarks/${bookmarkId}`)
+          .expect(404, { error: { message: `Bookmark doesn't exist` } })
       })
     })
 
-    context('Given there are folders in the database', () => {
-      const testArticles = makeArticlesArray()
+    context('Given there are bookmarks in the database', () => {
+      const testBookmarks = makeBookmarksArray()
 
-      beforeEach('insert folders', () => {
+      beforeEach('insert bookmarks', () => {
         return db
-          .into('folders')
-          .insert(testArticles)
+          .into('bookmarks')
+          .insert(testBookmarks)
       })
 
-      it('responds with 204 and removes the folder', () => {
+      it('responds with 204 and removes the bookmark', () => {
         const idToRemove = 2
-        const expectedArticles = testArticles.filter(folder => folder.id !== idToRemove)
+        const expectedBookmarks = testBookmarks.filter(bookmark => bookmark.id !== idToRemove)
         return supertest(app)
-          .delete(`/api/folders/${idToRemove}`)
+          .delete(`/api/bookmarks/${idToRemove}`)
           .expect(204)
           .then(res =>
             supertest(app)
-              .get(`/api/folders`)
-              .expect(expectedArticles)
+              .get(`/api/bookmarks`)
+              .expect(expectedBookmarks)
           )
       })
     })
   })
 
-  describe(`PATCH /api/folders/:folder_id`, () => {
-    context(`Given no folders`, () => {
+  describe(`PATCH /api/bookmarks/:bookmark_id`, () => {
+    context(`Given no bookmarks`, () => {
       it(`responds with 404`, () => {
-        const folderId = 123456
+        const bookmarkId = 123456
         return supertest(app)
-          .delete(`/api/folders/${folderId}`)
-          .expect(404, { error: { message: `Article doesn't exist` } })
+          .delete(`/api/bookmarks/${bookmarkId}`)
+          .expect(404, { error: { message: `Bookmark doesn't exist` } })
       })
     })
 
-    context('Given there are folders in the database', () => {
-      const testArticles = makeArticlesArray()
+    context('Given there are bookmarks in the database', () => {
+      const testBookmarks = makeBookmarksArray()
 
-      beforeEach('insert folders', () => {
+      beforeEach('insert bookmarks', () => {
         return db
-          .into('folders')
-          .insert(testArticles)
+          .into('bookmarks')
+          .insert(testBookmarks)
       })
 
-      it('responds with 204 and updates the folder', () => {
+      it('responds with 204 and updates the bookmark', () => {
         const idToUpdate = 2
-        const updateArticle = {
-          title: 'updated folder title',
-          style: 'Interview',
-          content: 'updated folder content',
+        const updateBookmark = {
+          title: 'updated bookmark title',
+          url: 'Interview',
+          description: 'updated bookmark description',
         }
-        const expectedArticle = {
-          ...testArticles[idToUpdate - 1],
-          ...updateArticle
+        const expectedBookmark = {
+          ...testBookmarks[idToUpdate - 1],
+          ...updateBookmark
         }
         return supertest(app)
-          .patch(`/api/folders/${idToUpdate}`)
-          .send(updateArticle)
+          .patch(`/api/bookmarks/${idToUpdate}`)
+          .send(updateBookmark)
           .expect(204)
           .then(res =>
             supertest(app)
-              .get(`/api/folders/${idToUpdate}`)
-              .expect(expectedArticle)
+              .get(`/api/bookmarks/${idToUpdate}`)
+              .expect(expectedBookmark)
           )
       })
 
       it(`responds with 400 when no required fields supplied`, () => {
         const idToUpdate = 2
         return supertest(app)
-          .patch(`/api/folders/${idToUpdate}`)
+          .patch(`/api/bookmarks/${idToUpdate}`)
           .send({ irrelevantField: 'foo' })
           .expect(400, {
             error: {
-              message: `Request body must content either 'title', 'style' or 'content'`
+              message: `Request body must description either 'title', 'url' or 'description'`
             }
           })
       })
 
       it(`responds with 204 when updating only a subset of fields`, () => {
         const idToUpdate = 2
-        const updateArticle = {
-          title: 'updated folder title',
+        const updateBookmark = {
+          title: 'updated bookmark title',
         }
-        const expectedArticle = {
-          ...testArticles[idToUpdate - 1],
-          ...updateArticle
+        const expectedBookmark = {
+          ...testBookmarks[idToUpdate - 1],
+          ...updateBookmark
         }
 
         return supertest(app)
-          .patch(`/api/folders/${idToUpdate}`)
+          .patch(`/api/bookmarks/${idToUpdate}`)
           .send({
-            ...updateArticle,
+            ...updateBookmark,
             fieldToIgnore: 'should not be in GET response'
           })
           .expect(204)
           .then(res =>
             supertest(app)
-              .get(`/api/folders/${idToUpdate}`)
-              .expect(expectedArticle)
+              .get(`/api/bookmarks/${idToUpdate}`)
+              .expect(expectedBookmark)
           )
       })
     })

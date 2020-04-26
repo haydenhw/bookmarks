@@ -1,56 +1,49 @@
-function makeArticlesArray() {
+function makeBookmarksArray() {
   return [
     {
       id: 1,
-      date_published: '2029-01-22T16:28:32.615Z',
-      title: 'First test post!',
-      style: 'How-to',
-      content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Natus consequuntur deserunt commodi, nobis qui inventore corrupti iusto aliquid debitis unde non.Adipisci, pariatur.Molestiae, libero esse hic adipisci autem neque ?'
+      title: 'Thinkful',
+      url: 'https://www.thinkful.com',
+      description: 'Think outside the classroom',
+      rating: 5,
     },
     {
       id: 2,
-      date_published: '2100-05-22T16:28:32.615Z',
-      title: 'Second test post!',
-      style: 'News',
-      content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum, exercitationem cupiditate dignissimos est perspiciatis, nobis commodi alias saepe atque facilis labore sequi deleniti. Sint, adipisci facere! Velit temporibus debitis rerum.'
+      title: 'Google',
+      url: 'https://www.google.com',
+      description: 'Where we find everything else',
+      rating: 4,
     },
     {
       id: 3,
-      date_published: '1919-12-22T16:28:32.615Z',
-      title: 'Third test post!',
-      style: 'Listicle',
-      content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Possimus, voluptate? Necessitatibus, reiciendis? Cupiditate totam laborum esse animi ratione ipsa dignissimos laboriosam eos similique cumque. Est nostrum esse porro id quaerat.'
+      title: 'MDN',
+      url: 'https://developer.mozilla.org',
+      description: 'The only place to find web documentation',
+      rating: 5,
     },
-    {
-      id: 4,
-      date_published: '1919-12-22T16:28:32.615Z',
-      title: 'Fourth test post!',
-      style: 'Story',
-      content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum molestiae accusamus veniam consectetur tempora, corporis obcaecati ad nisi asperiores tenetur, autem magnam. Iste, architecto obcaecati tenetur quidem voluptatum ipsa quam?'
-    },
-  ];
+  ]
 }
 
-function makeMaliciousArticle() {
-  const maliciousArticle = {
+function makeMaliciousBookmark() {
+  const maliciousBookmark = {
     id: 911,
-    style: 'How-to',
-    date_published: new Date().toISOString(),
     title: 'Naughty naughty very naughty <script>alert("xss");</script>',
-    content: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`
+    url: 'https://www.hackers.com',
+    description: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`,
+    rating: 1,
   }
-  const expectedArticle = {
-    ...maliciousArticle,
+  const expectedBookmark = {
+    ...maliciousBookmark,
     title: 'Naughty naughty very naughty &lt;script&gt;alert(\"xss\");&lt;/script&gt;',
-    content: `Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`
+    description: `Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`
   }
   return {
-    maliciousArticle,
-    expectedArticle,
+    maliciousBookmark,
+    expectedBookmark,
   }
 }
 
 module.exports = {
-  makeArticlesArray,
-  makeMaliciousArticle,
+  makeBookmarksArray,
+  makeMaliciousBookmark,
 }
