@@ -1,68 +1,68 @@
 const path = require('path');
 const express = require('express');
-const FoldersService = require('./folders-service');
+const BookmarksService = require('./bookmarks-service');
 
-const foldersRouter = express.Router();
+const bookmarksRouter = express.Router();
 const jsonParser = express.json();
 
-foldersRouter
+bookmarksRouter
   .route('/')
   .get((req, res, next) => {
     const knexInstance = req.app.get('db');
-    FoldersService.getAllFolders(knexInstance)
-      .then(folders => {
-        res.json(folders)
+    BookmarksService.getAllBookmarks(knexInstance)
+      .then(bookmarks => {
+        res.json(bookmarks)
       })
       .catch(next)
   })
   .post(jsonParser, (req, res, next) => {
     const { name } = req.body;
-    const newFolder = { name };
+    const newBookmark = { name };
 
-    for (const [key, value] of Object.entries(newFolder))
+    for (const [key, value] of Object.entries(newBookmark))
       if (value == null)
         return res.status(400).json({
           error: { message: `Missing '${key}' in request body` }
         });
 
-    FoldersService.insertFolder(
+    BookmarksService.insertBookmark(
       req.app.get('db'),
-      newFolder
+      newBookmark
     )
-      .then(folder => {
+      .then(bookmark => {
         res
           .status(201)
-          .location(path.posix.join(req.originalUrl, `/${folder.id}`))
-          .json(folder)
+          .location(path.posix.join(req.originalUrl, `/${bookmark.id}`))
+          .json(bookmark)
       })
       .catch(next)
   });
 
-foldersRouter
-  .route('/:folder_id')
+bookmarksRouter
+  .route('/:bookmark_id')
   .all((req, res, next) => {
-    FoldersService.getById(
+    BookmarksService.getById(
       req.app.get('db'),
-      req.params.folder_id
+      req.params.bookmark_id
     )
-      .then(folder => {
-        if (!folder) {
+      .then(bookmark => {
+        if (!bookmark) {
           return res.status(404).json({
-            error: { message: `Folder doesn't exist` }
+            error: { message: `Bookmark doesn't exist` }
           })
         }
-        res.folder = folder;
+        res.bookmark = bookmark;
         next()
       })
       .catch(next)
   })
   .get((req, res, next) => {
-    res.json(res.folder)
+    res.json(res.bookmark)
   })
   .delete((req, res, next) => {
-    FoldersService.deleteFolder(
+    BookmarksService.deleteBookmark(
       req.app.get('db'),
-      req.params.folder_id
+      req.params.bookmark_id
     )
       .then(numRowsAffected => {
         res.status(204).end()
@@ -71,9 +71,9 @@ foldersRouter
   })
   .patch(jsonParser, (req, res, next) => {
     const { name } = req.body;
-    const folderToUpdate = { name };
+    const bookmarkToUpdate = { name };
 
-    const numberOfValues = Object.values(folderToUpdate).filter(Boolean).length;
+    const numberOfValues = Object.values(bookmarkToUpdate).filter(Boolean).length;
     if (numberOfValues === 0)
       return res.status(400).json({
         error: {
@@ -81,10 +81,10 @@ foldersRouter
         }
       });
 
-    FoldersService.updateFolder(
+    BookmarksService.updateBookmark(
       req.app.get('db'),
-      req.params.folder_id,
-      folderToUpdate
+      req.params.bookmark_id,
+      bookmarkToUpdate
     )
       .then(numRowsAffected => {
         res.status(204).end()
@@ -92,4 +92,4 @@ foldersRouter
       .catch(next)
   });
 
-module.exports = foldersRouter;
+module.exports = bookmarksRouter;

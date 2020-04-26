@@ -1,29 +1,29 @@
-const FoldersService = {
-  getAllFolders(knex) {
-    return knex.select('*').from('folders')
+const BookmarksService = {
+  getAllBookmarks(knex) {
+    return knex.select('*').from('bookmarks')
   },
-  insertFolder(knex, newFolder) {
+  insertBookmark(knex, newBookmark) {
     return knex
-      .insert(newFolder)
-      .into('folders')
+      .insert(newBookmark)
+      .into('bookmarks')
       .returning('*')
       .then(rows => {
         return rows[0]
       })
   },
   getById(knex, id) {
-    return knex.from('folders').select('*').where('id', id).first()
+    return knex.from('bookmarks').select('*').where('id', id).first()
   },
-  deleteFolder(knex, id) {
-    return knex('folders')
+  deleteBookmark(knex, id) {
+    return knex('bookmarks')
       .where({ id })
       .delete()
   },
-  updateFolder(knex, id, newFolderFields) {
-    return knex('folders')
+  updateBookmark(knex, id, newBookmarkFields) {
+    return knex('bookmarks')
       .where({ id })
-      .update(newFolderFields)
+      .update(newBookmarkFields)
   },
 }
 
-module.exports = FoldersService
+module.exports = BookmarksService
