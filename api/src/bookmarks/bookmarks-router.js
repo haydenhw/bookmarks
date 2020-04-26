@@ -16,8 +16,8 @@ bookmarksRouter
       .catch(next)
   })
   .post(jsonParser, (req, res, next) => {
-    const { name } = req.body;
-    const newBookmark = { name };
+    const { title, url, rating, description } = req.body;
+    const newBookmark = { title, url, rating, description };
 
     for (const [key, value] of Object.entries(newBookmark))
       if (value == null)
@@ -70,14 +70,14 @@ bookmarksRouter
       .catch(next)
   })
   .patch(jsonParser, (req, res, next) => {
-    const { name } = req.body;
-    const bookmarkToUpdate = { name };
+    const { title, url, rating, description } = req.body;
+    const bookmarkToUpdate = { title, url, rating, description };
 
     const numberOfValues = Object.values(bookmarkToUpdate).filter(Boolean).length;
     if (numberOfValues === 0)
       return res.status(400).json({
         error: {
-          message: `Request body must contain 'name`
+          message: `Request body must contain 'title, url, rating, description`
         }
       });
 
