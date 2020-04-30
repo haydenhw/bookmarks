@@ -8,6 +8,7 @@ import Nav from './components/Nav';
 import MainView from "./views/MainView";
 import FolderView from "./views/FolderView";
 import NoteView from "./views/NoteView";
+import AddBookmarkView from "./views/AddBookmarkView";
 
 function App() {
   return (
@@ -17,6 +18,9 @@ function App() {
         <Switch>
           <Route exact path="/">
             <MainView/>
+          </Route>
+          <Route exact path="/add-bookmark">
+            <AddBookmarkView/>
           </Route>
           <Route path="/folder/:id">
             <FolderView/>
