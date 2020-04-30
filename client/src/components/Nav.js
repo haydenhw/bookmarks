@@ -10,7 +10,7 @@ function Nav() {
   return (
     <nav>
       <div style={style.nav} className="nav-wrapper">
-        <a href="#" className="brand-logo">Noteful</a>
+        <a href="#" className="brand-logo">Bookmarkful</a>
       </div>
     </nav>
   );

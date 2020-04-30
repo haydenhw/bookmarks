@@ -3,13 +3,13 @@ import {Link, useParams} from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Main from "../components/Main";
 import Container from "../components/Container";
-import noteData from "../noteData";
-import Note from "../components/Note";
+import bookmarkData from "../bookmarkData";
+import Bookmark from "../components/Bookmark";
 
-function NoteView() {
-  const { id: selectedNoteId  } = useParams();
-  const note = noteData.notes.find(n => n.id === selectedNoteId)
-  const folderName = noteData.folders.find(f => f.id === note.folderId).name;
+function BookmarkView() {
+  const { id: selectedBookmarkId  } = useParams();
+  const bookmark = bookmarkData.bookmarks.find(n => n.id === selectedBookmarkId)
+  const folderName = bookmarkData.folders.find(f => f.id === bookmark.folderId).name;
   return (
     <Container>
       <Sidebar>
@@ -19,11 +19,11 @@ function NoteView() {
         </div>
       </Sidebar>
       <Main>
-        <Note {...note}/>
-        <p>{note.content}</p>
+        <Bookmark {...bookmark}/>
+        <p>{bookmark.content}</p>
       </Main>
     </Container>
   );
 }
 
-export default NoteView;
+export default BookmarkView;

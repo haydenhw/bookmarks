@@ -1,4 +1,5 @@
 import React from 'react';
+import {useHistory} from "react-router-dom";
 
 const style = {
   addBookmarkForm: {
@@ -12,6 +13,7 @@ const style = {
 
 
 export default function AddBookmarkView() {
+  const history = useHistory();
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -23,6 +25,8 @@ export default function AddBookmarkView() {
       rating: rating.value,
     };
     // Actions.CreateBookmark(newBookmark)
+    // route to bookmarks list
+    history.push('/');
   }
 
   return (
