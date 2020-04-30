@@ -23,8 +23,8 @@ const api = {
   createBookmark(newBookmark) {
     return requests.post('/bookmarks', newBookmark);
   },
-  updateBookmark(id) {
-    return requests.patch(`/bookmarks/${id}`);
+  updateBookmark(bookmarkId, updatedBookmark) {
+    return requests.patch(`/bookmarks/${bookmarkId}`, updatedBookmark);
   },
   deleteBookmark(id) {
     return requests.delete(`/bookmarks/${id}`);

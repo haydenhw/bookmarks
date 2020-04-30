@@ -34,8 +34,8 @@ const reducer = (state, action) => {
       return {
         ...state,
         bookmarks: state.bookmarks.map(bookmark =>
-          bookmark.id === action.id ?
-            Object.assign({}, bookmark, {...action.toUpdate}) :
+          bookmark.id === action.updatedBookmark.id ?
+            Object.assign({}, bookmark, {...action.updatedBookmark}) :
             bookmark
         )
       };

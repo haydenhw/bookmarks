@@ -1,5 +1,5 @@
 import React from 'react';
-import {useHistory} from "react-router-dom";
+import {useHistory, useParams} from "react-router-dom";
 import {useStateValue} from "../index";
 import api from "../api";
 
@@ -17,27 +17,35 @@ const style = {
 export default function AddBookmarkView() {
   const [{bookmarks}, dispatch] = useStateValue();
   const history = useHistory();
+  let {id} = useParams();
+  id = parseInt(id);
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     const {title, url, description, rating} = event.target;
-    const newBookmark = {
+    const updatedBookmark = {
+      id,
       title: title.value,
       url: url.value,
       description: description.value,
       rating: rating.value,
     };
 
-    const savedBookmark = await api.createBookmark(newBookmark);
+    await api.updateBookmark(id, updatedBookmark);
 
     dispatch({
-      type: 'addBookmark',
-      newBookmark: savedBookmark,
+      type: 'updateBookmark',
+      updatedBookmark,
     })
 
     history.push('/');
   }
 
+  const selectedBookmark = bookmarks.find(b => b.id === id);
+  if (!selectedBookmark) {
+    console.log('No bookmark by provided id found')
+    return null;
+  }
   return (
     <div className="container">
       <div style={style.addBookmarkForm} className="card">
@@ -46,18 +54,18 @@ export default function AddBookmarkView() {
           <form onSubmit={handleSubmit}>
             <label>
               Title:
-              <input name="title" type="text" />
+              <input defaultValue={selectedBookmark.title} name="title" type="text" />
             </label>
             <label>
               Url:
-              <input name="url" type="text" />
+              <input defaultValue={selectedBookmark.url} name="url" type="text" />
             </label>
             <label>
               Description:
-              <input name="description" type="text" />
+              <input defaultValue={selectedBookmark.description} name="description" type="text" />
             </label>
             <label> Rating
-              <select name="rating" style={style.select}>
+              <select defaultValue={selectedBookmark.rating} name="rating" style={style.select}>
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>

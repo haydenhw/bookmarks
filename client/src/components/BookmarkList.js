@@ -12,7 +12,10 @@ const style = {
 
 function BookmarkList() {
   const [{bookmarks}, dispatch] = useStateValue();
-  const bookmarkList = bookmarks.map(n => <Bookmark key={n.id} {...n} />)
+  console.log(bookmarks)
+  if (bookmarks.length === 0) return null;
+
+  const bookmarkList = bookmarks.map(b => <Bookmark key={b.id} {...b} />)
   return (
     <div className="container">
       <div style={style.bookmarkListWrap}>

@@ -4,11 +4,12 @@ import {
   Switch,
   Route,
 } from "react-router-dom";
-import Nav from './components/Nav';
-import MainView from "./views/MainView";
-import AddBookmarkView from "./views/AddBookmarkView";
 import {useStateValue} from "./index";
 import api from "./api";
+import Nav from './components/Nav';
+import BookmarkListView from "./views/BookmarkListView";
+import AddBookmarkView from "./views/AddBookmarkView";
+import EditBookmarkView from "./views/EditBookmarkView";
 
 function App() {
   const [state, dispatch] = useStateValue();
@@ -27,10 +28,13 @@ function App() {
         <Nav/>
         <Switch>
           <Route exact path="/">
-            <MainView/>
+            <BookmarkListView/>
           </Route>
           <Route exact path="/add-bookmark">
             <AddBookmarkView/>
+          </Route>
+          <Route exact path="/edit-bookmark/:id">
+            <EditBookmarkView/>
           </Route>
         </Switch>
       </div>
