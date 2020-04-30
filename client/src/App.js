@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   BrowserRouter as Router,
   Switch,
@@ -7,8 +7,20 @@ import {
 import Nav from './components/Nav';
 import MainView from "./views/MainView";
 import AddBookmarkView from "./views/AddBookmarkView";
+import {useStateValue} from "./index";
+import api from "./api";
 
 function App() {
+  const [state, dispatch] = useStateValue();
+  useEffect(() => {
+    (async () => {
+      const bookmarks = await api.fetchBookmarks();
+      dispatch({
+        type: 'loadBookmarks',
+        bookmarks,
+      })
+    })()
+  }, []);
   return (
     <Router>
       <div className="App">
