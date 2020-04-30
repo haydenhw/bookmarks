@@ -42,10 +42,7 @@ export default function AddBookmarkView() {
   }
 
   const selectedBookmark = bookmarks.find(b => b.id === id);
-  if (!selectedBookmark) {
-    console.log('No bookmark by provided id found')
-    return null;
-  }
+  if (!selectedBookmark) return null;
   return (
     <div className="container">
       <div style={style.addBookmarkForm} className="card">
