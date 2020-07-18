@@ -13,7 +13,6 @@ const style = {
   }
 }
 
-
 export default function AddBookmarkView() {
   const [{bookmarks}, dispatch] = useStateValue();
   const history = useHistory();
